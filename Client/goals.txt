@@ -1,0 +1,33 @@
+Image comparison matching method
+Minutiae matching using library
+On-board fingerprint matching 
+Encryption and decryption of files using fingerprint templates from sensor
+    store templates in database?
+
+    take image
+    call image2tz
+    call upchar
+    read character file
+
+    repeat and see if the files are the same
+        they are not 
+
+PROCESS idea 1:
+1. user scans fingerprint
+2. Fingerprint is stored in charbuffer1 on scanner
+3. Python sequentially uploads a image from the database to the scanner charbuffer1
+4. Match() is performed on the scanner
+5. If there is a match then the character file from the database is used to generate the decryption key
+
+PROCESS idea 2: -> Probs better idk because we don't have to do a ton of IO on the scanner (slow)
+1. User scans fingerprint
+2. Download fingerprint to computer
+3. Fingerprint is uploaded to server along with selected match method
+4. Match fingerprint on server against database using the selected method
+    - How do we store the image files in the DB? 
+        - base64?
+    - Server is written in Java 
+    - Server returns match/no match
+    - If there is a match it also returns the decryption key
+5. Python reads the result and if there's match reads the decryption key too
+6. DRM protected software is decrypted
