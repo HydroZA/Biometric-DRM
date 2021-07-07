@@ -2,14 +2,14 @@ package yhames.pro.project.afis;
 
 public class Fingerprint {
     int id;
-    String img;
+    byte[] img;
     
-    public Fingerprint(int id, String img) {
+    public Fingerprint(int id, byte[]  img) {
         this.id = id;
         this.img = img;
     }
 
-    public Fingerprint(String img) {
+    public Fingerprint(byte[] img) {
         this.img = img;
     }
 
@@ -21,11 +21,11 @@ public class Fingerprint {
         this.id = id;
     }
 
-    public String getImg() {
+    public byte[] getImg() {
         return img;
     }
 
-    public void setImg(String img) {
+    public void setImg(byte[] img) {
         this.img = img;
     }
     

@@ -2,6 +2,9 @@ package yhames.pro.project.afis;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,28 +16,30 @@ import yhames.pro.project.afis.matchers.*;
 public class AppTest 
 {
     private Path fileName; 
-    private Fingerprint fp; 
+    private String fp; 
 
-    AppTest() {
+    public AppTest() {
         try {
-           fileName = Path.of("fingerprints/LeftIndex.b64");  
-           fp = new Fingerprint(Files.readString(fileName));
+           fileName = Path.of("/Users/james/ownCloud/University/Masters/Project/Code/Stable/Server/resources/fingerprints/LeftIndex.b64");  
+           fp = Files.readString(fileName);
         }
         catch (IOException e) {
             System.err.println("Unable to find the reference b64 img");
+            fail();
         }
     }
 
     @Test
     public void testBase64Decode() {
         try {
-            byte[] expected = Files.readAllBytes(Path.of("fingerprints/LeftIndex.bmp"));
-            byte[] actual = Base64Decoder.decode(fp.getImg());
+            byte[] expected = Files.readAllBytes(Path.of("/Users/james/ownCloud/University/Masters/Project/Code/Stable/Server/resources/fingerprints/LeftIndex.bmp"));
+            byte[] actual = Base64Decoder.decode(fp);
 
             Assert.assertEquals(expected, actual);
         }
         catch (IOException e) {
             System.err.println("Unable to find the reference b64 img");
+            fail();
         }   
     }
 
@@ -42,7 +47,14 @@ public class AppTest
     public void testDatabaseDownload() {
         DatabaseConnection db = new DatabaseConnection();
 
-        Assert.assertEquals(db.getFingerprints()[0], fp.getImg());
+        try {
+            byte[] actual = Files.readAllBytes(Path.of("/Users/james/ownCloud/University/Masters/Project/Code/Stable/Server/resources/fingerprints/LeftIndex.bmp"));
+            Assert.assertArrayEquals(db.getFingerprints()[0].getImg(), actual);
+        }
+        catch (IOException e) {
+            fail();
+        }
+        
     }
 
     @Test
@@ -51,7 +63,8 @@ public class AppTest
         are detected as such
     */
     public void testMatchingMatch() {
-        Assert.assertTrue(new SourceAFIS().match(fp));
+       // Assert.assertTrue(new SourceAFIS().match(fp));
+       Assert.assertTrue(false);
     }
 
 
@@ -61,7 +74,6 @@ public class AppTest
     */
     @Test
     public void testMatchingNoMatch() {
-        // TODO:
-        Assert.assertTrue(true);
+        Assert.assertTrue(false);
     }
 }

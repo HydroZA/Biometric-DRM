@@ -19,6 +19,5 @@ data = (0, fp)
 
 db.execute(insert, data)
 
-
 db.commit()
 db.close()
