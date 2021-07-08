@@ -54,6 +54,12 @@ public class MatchServer
 
             MatchRequest matchRequest = readMatchRequest(in);
             Match result = matchClient(matchRequest);
+            if (result.isMatch()) {
+                out.write(new byte[] {0x00});
+            }
+            else {
+                out.write(new byte[] {0x01});
+            }
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -65,12 +71,15 @@ public class MatchServer
         switch (matchRequest.getMethod()) {
             case SOURCE_AFIS:
                 System.out.println("SourceAFIS Method chosen by Client");
+                break;
             case MSE:
                 System.out.println("Mean Squared Error Method chosen by Client");
+                break;
             case SSIM:
                 System.out.println("Structural Similarity Index Method chosen by client");
+                break;
         }
-        return null;
+        return new Match(true);
     }
 
     /* Clients request matches in the following format:
