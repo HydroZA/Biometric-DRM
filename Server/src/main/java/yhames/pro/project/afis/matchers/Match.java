@@ -15,6 +15,10 @@ public class Match {
     public Match(boolean im) {
         this.isMatch = im;
     }
+    public Match(boolean im, double score) {
+        this.isMatch = im;
+        this.score = score;
+    }
 
     public boolean isMatch() {
         return isMatch;

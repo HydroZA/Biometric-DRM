@@ -32,7 +32,18 @@ public class SourceAFIS extends Matcher {
     }
 
     public Match match (Fingerprint probe, Fingerprint candidate) {
-        return null;
+        FingerprintTemplate probeTemplate = convertFingerprintToTemplate(probe);
+        FingerprintTemplate candidateTemplate = convertFingerprintToTemplate(candidate);
+
+        double score = new FingerprintMatcher(probeTemplate).match(candidateTemplate);
+
+        if (score > threshold) {
+            return new Match(true, score);
+        }
+        else {
+            return new Match(false);
+        }
+
     }
 
     private static FingerprintTemplate convertFingerprintToTemplate (Fingerprint fp) {

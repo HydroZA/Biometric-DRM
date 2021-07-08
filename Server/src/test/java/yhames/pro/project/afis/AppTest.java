@@ -41,10 +41,9 @@ public class AppTest
 
     @Test
     /*
-        Tests if 2 images which should be a match
-        are detected as such
+        Tests searching the database for a match
     */
-    public void testMatchingMatch() {
+    public void testDBSearchMatching() {
        Match match = new SourceAFIS().search(fp, new Fingerprint[] {fp});
 
        System.out.println("Match Score: " + match.getScore());
@@ -65,7 +64,22 @@ public class AppTest
         are detected as such
     */
     @Test
-    public void testMatchingNoMatch() {
-        fail();
+    public void testMatching() {
+        try {
+            // get a fingerprint from a different finger
+            Fingerprint test = new Fingerprint(
+                Files.readAllBytes(Path.of("/Users/james/ownCloud/University/Masters/Project/Code/Stable/Server/resources/fingerprints/LeftHand/LeftMiddle.bmp"))
+              );
+            Match match = new SourceAFIS().match(test, fp);
+
+            System.out.println("Match Score: " + match.getScore());
+
+            Assert.assertFalse(match.isMatch());
+        }
+        catch (IOException e) {
+            fail();
+        }
+
+
     }
 }
