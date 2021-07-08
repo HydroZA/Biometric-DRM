@@ -8,6 +8,8 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.lang.Thread;
+import java.util.concurrent.*;
 
 import yhames.pro.project.afis.matchers.*;
 
@@ -79,7 +81,44 @@ public class AppTest
         catch (IOException e) {
             fail();
         }
+    }
 
+    @Test
+    /*
+        Tests the MatchServer by calling a python script which simulates a client
+    */
+    public void testServer() {
+        final int iterations = 10;
 
+        Thread t = new Thread(() -> {
+            MatchServer server = new MatchServer();
+            server.start(6969);
+        });
+        t.start();
+
+        int exitCode = executePythonScript(
+            "/Users/james/ownCloud/University/Masters/Project/Code/Stable/Server/src/test/java/yhames/pro/project/afis/MatchServerTester.py", 
+            iterations
+        );
+
+        t.stop();;
+
+        Assert.assertEquals(0, exitCode);
+    }
+
+    // Returns exit code of python program
+    private int executePythonScript(String path, int iterations) {
+        // Call python script
+        ProcessBuilder processBuilder = new ProcessBuilder("python3", path, String.valueOf(iterations));
+        processBuilder.redirectOutput();
+    
+        try {
+            Process process = processBuilder.start();
+            process.waitFor();
+            return process.exitValue();
+        }
+        catch (Exception e) {
+            return 1; 
+        }
     }
 }

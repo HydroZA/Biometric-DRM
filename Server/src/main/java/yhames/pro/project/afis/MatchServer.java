@@ -8,14 +8,13 @@
 
 package yhames.pro.project.afis;
 
-import yhames.pro.project.afis.*;
-import yhames.pro.project.afis.matchers.*;
-
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+import yhames.pro.project.afis.matchers.Match;
 
 public class MatchServer 
 {
@@ -26,7 +25,7 @@ public class MatchServer
         new MatchServer().start(6969);
     }
 
-    private void start(int port) {
+    public void start(int port) {
         try {
             ServerSocket server = new ServerSocket(port);
             System.out.println("Server Listening on " + port);
@@ -53,6 +52,11 @@ public class MatchServer
             OutputStream out = client.getOutputStream();
 
             MatchRequest matchRequest = readMatchRequest(in);
+
+            if (matchRequest == null) {
+                return;
+            }
+
             Match result = matchClient(matchRequest);
             if (result.isMatch()) {
                 out.write(new byte[] {0x00});
@@ -61,8 +65,8 @@ public class MatchServer
                 out.write(new byte[] {0x01});
             }
         }
-        catch (IOException e) {
-            e.printStackTrace();
+        catch (Exception e) {
+            System.err.println("Error while handling client, continuing...");
             return;
         }
     }
@@ -104,9 +108,8 @@ public class MatchServer
 
             return new MatchRequest(method, new Fingerprint(img));
         }
-        catch (IOException e) {
-            e.printStackTrace();
-            System.exit(1);
+        catch (Exception e) {
+            System.err.println("Error while reading match request, continuing...");
             return null;
         }
     }
