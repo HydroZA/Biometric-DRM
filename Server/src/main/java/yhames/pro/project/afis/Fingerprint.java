@@ -1,8 +1,8 @@
 package yhames.pro.project.afis;
 
 public class Fingerprint {
-    int id;
-    byte[] img;
+    private int id;
+    private byte[] img;
     
     public Fingerprint(int id, byte[]  img) {
         this.id = id;

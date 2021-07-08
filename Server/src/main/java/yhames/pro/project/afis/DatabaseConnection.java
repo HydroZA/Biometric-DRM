@@ -7,8 +7,6 @@ import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-import java.util.ArrayList;
-
 public class DatabaseConnection {
     private Fingerprint[] fingerprints;
     private Connection db;
@@ -17,10 +15,10 @@ public class DatabaseConnection {
 
     public DatabaseConnection() {
         // connect to DB
-        db = connect();
+        connect();
     }
 
-    private Connection connect() {
+    private void connect() {
         Connection conn = null;
         try {
             // create a connection to the database
@@ -30,7 +28,7 @@ public class DatabaseConnection {
             e.printStackTrace();
             System.exit(1);
         } 
-        return conn;
+        this.db = conn;
     }
 
     public Fingerprint[] getFingerprints() {
@@ -48,6 +46,10 @@ public class DatabaseConnection {
         final String sqlGetFingerprintsLength = "SELECT COUNT(*) FROM Fingerprints";
 
         try {
+            if (db.isClosed()) {
+                connect();
+            }
+
             PreparedStatement size = db.prepareStatement(sqlGetFingerprintsLength);
             int len = size.executeQuery().getInt(1);
 
@@ -64,10 +66,36 @@ public class DatabaseConnection {
             }
 
             this.fingerprints = fps;
+            db.close();
         }
         catch (SQLException e) {
             e.printStackTrace();
             System.exit(1);
+        }
+    }
+
+    public boolean enroll(Fingerprint fp) {
+        final String sqlEnroll = "INSERT INTO Fingerprints (image) VALUES (?)";
+
+        try {
+            if (db.isClosed()) {
+                connect();
+            }
+            PreparedStatement stmt = db.prepareStatement(sqlEnroll);
+
+            // Adds our byte array to the SQL query
+            stmt.setBytes(1, fp.getImg());
+
+            // execute() returns false if the DB was updated, invert it so that true indicates success
+            boolean result = !stmt.execute();
+            db.close();
+
+            return result;
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            System.exit(1);
+            return false;
         }
     }
 }
