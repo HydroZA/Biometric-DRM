@@ -8,13 +8,13 @@ def test():
     s.connect(('127.0.0.1', 6969))
 
     # Send just enough data to simulate a sourceafis match request
-    img_path = '/Users/james/ownCloud/University/Masters/Project/Code/Stable/Server/resources/fingerprints/LeftHand/LeftIndex.bmp'
+    img_path = '/Users/james/ownCloud/University/Masters/Project/Code/Stable/Server/resources/fingerprints/LeftIndex.bmp'
 
     img = None
     with open (img_path, 'rb') as imgfile:
         img = imgfile.read()
 
-    img_len = len(img).to_bytes(8, sys.byteorder)
+    img_len = len(img).to_bytes(4, 'big' )
 
     data = [0x00]
     data.extend(bytearray(img_len))

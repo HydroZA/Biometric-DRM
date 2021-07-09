@@ -1,8 +1,8 @@
 package yhames.pro.project.afis;
 
 /* Clients request matches in the following format:
-    |--------|------------------------|--------------|
-    1 byte            |  2 bytes      | n bytes
+    |--------|----------------|--------------|
+    1 byte            |  4 bytes      | n bytes
     method            |  body length  | body
     0x00 = sourceafis |               |
     0x01 = ssim       |

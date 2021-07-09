@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.lang.Thread;
-import java.util.concurrent.*;
 
 import yhames.pro.project.afis.matchers.*;
 
@@ -38,14 +37,14 @@ public class AppTest
 
         byte[] expected = fp.getImg();
         byte[] actual = db.getFingerprints()[0].getImg();
-        Assert.assertArrayEquals(actual, expected);
+        Assert.assertArrayEquals(expected, actual);
     }
 
     @Test
     /*
         Tests searching the database for a match
     */
-    public void testDBSearchMatching() {
+    public void testDatabaseSearch() {
        Match match = new SourceAFIS().search(fp, new Fingerprint[] {fp});
 
        System.out.println("Match Score: " + match.getScore());
@@ -90,32 +89,34 @@ public class AppTest
     public void testServer() {
         final int iterations = 10;
 
+        // Start the server in its own thread
         Thread t = new Thread(() -> {
             MatchServer server = new MatchServer();
             server.start(6969);
         });
         t.start();
 
-        int exitCode = executePythonScript(
+        int exitCode = runPythonScript(
             "/Users/james/ownCloud/University/Masters/Project/Code/Stable/Server/src/test/java/yhames/pro/project/afis/MatchServerTester.py", 
             iterations
         );
 
-        t.stop();;
+        // Kill the server thread
+        t.interrupt();        
 
         Assert.assertEquals(0, exitCode);
     }
 
     // Returns exit code of python program
-    private int executePythonScript(String path, int iterations) {
+    private int runPythonScript(String path, int iterations) {
         // Call python script
         ProcessBuilder processBuilder = new ProcessBuilder("python3", path, String.valueOf(iterations));
         processBuilder.redirectOutput();
     
         try {
-            Process process = processBuilder.start();
-            process.waitFor();
-            return process.exitValue();
+            return processBuilder
+                .start()
+                .waitFor();
         }
         catch (Exception e) {
             return 1; 

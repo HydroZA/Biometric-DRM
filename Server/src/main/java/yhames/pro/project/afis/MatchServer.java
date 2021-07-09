@@ -11,10 +11,12 @@ package yhames.pro.project.afis;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 import yhames.pro.project.afis.matchers.Match;
+import yhames.pro.project.afis.matchers.SourceAFIS;
 
 public class MatchServer 
 {
@@ -58,7 +60,9 @@ public class MatchServer
             }
 
             Match result = matchClient(matchRequest);
+            
             if (result.isMatch()) {
+                System.out.println("MatchRequest succeeded with score: " + result.getScore());
                 out.write(new byte[] {0x00});
             }
             else {
@@ -72,23 +76,26 @@ public class MatchServer
     }
 
     private Match matchClient(MatchRequest matchRequest) {
+        DatabaseConnection db = new DatabaseConnection();
+
         switch (matchRequest.getMethod()) {
-            case SOURCE_AFIS:
+            case SOURCE_AFIS -> {
                 System.out.println("SourceAFIS Method chosen by Client");
-                break;
-            case MSE:
-                System.out.println("Mean Squared Error Method chosen by Client");
-                break;
-            case SSIM:
-                System.out.println("Structural Similarity Index Method chosen by client");
-                break;
+                return new SourceAFIS()
+                        .search(
+                                matchRequest.getProbe(),
+                                db.getFingerprints()
+                        );
+            }
+            case MSE -> System.out.println("Mean Squared Error Method chosen by Client");
+            case SSIM -> System.out.println("Structural Similarity Index Method chosen by client");
         }
         return new Match(true);
     }
 
     /* Clients request matches in the following format:
     |--------|------------------------|--------------|
-    1 byte            |  2 bytes      | n bytes
+    1 byte            |  4 bytes      | n bytes
     method            |  body length  | body
     0x00 = sourceafis |               |
     0x01 = ssim       |
@@ -100,8 +107,8 @@ public class MatchServer
             ComparisonMethod method = ComparisonMethod.values()[in.readNBytes(1)[0]];
 
             // Read the message length
-            byte[] lenBytes = in.readNBytes(2);
-            int len = lenBytes[0] + lenBytes[1];
+            byte[] lenBytes = in.readNBytes(4);
+            int len = ByteBuffer.wrap(lenBytes).getInt();
 
             // Read the image body
             byte[] img = in.readNBytes(len);

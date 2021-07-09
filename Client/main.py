@@ -3,6 +3,7 @@
 ### - Fix prompt messages when capturing 
 ### - Plan DRM System
 
+from match_request import MatchRequest
 import ScannerDriver.driver as driver
 import UI.ui as ui
 import platform 
@@ -11,8 +12,9 @@ import gi
 from gi.repository import GLib, GdkPixbuf, Gtk
 from PIL import Image
 import os
-import numpy
+import io
 import cv2
+import socket
 gi.require_version("Gtk", "3.0")
 
 if platform.system() == 'Linux':
@@ -20,7 +22,7 @@ if platform.system() == 'Linux':
 elif platform.system() == 'Windows':
     port = 'COM2'
 elif platform.system() == 'Darwin':
-    port = '/dev/tty.usbserial-1420'
+    port = '/dev/tty.usbserial-1410'
 
 ser = serial.Serial(
     port=port,
@@ -55,7 +57,23 @@ def on_btn_save_clicked(btn, gui):
     gui.set_prompt_label_text("Ready")
 
 def on_btn_match_clicked(btn, gui: ui.UI):
-    pass
+    img = gui.get_preview_image()
+    img_arr = image_to_byte_array(img)
+
+    match_request = MatchRequest(gui.get_match_method(), img_arr)
+    result = match_request.send()
+
+    if result:
+        print("Match Request was successful")
+    else:
+        print("Match Request failed")
+
+
+def image_to_byte_array(image:Image):
+  imgByteArr = io.BytesIO()
+  image.save(imgByteArr, format='BMP')
+  imgByteArr = imgByteArr.getvalue()
+  return imgByteArr
 
 def get_images_in_dir(path: str):
     if not path.endswith('/'):

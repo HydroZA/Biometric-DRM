@@ -1,3 +1,4 @@
+from match_request import ComparisonMethod
 import gi
 gi.require_version("Gtk", "3.0")
 gi.require_version('GdkPixbuf', '2.0')
@@ -5,7 +6,6 @@ from gi.repository import GLib, GdkPixbuf, GObject
 from PIL import Image
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk
-import ImageComparison.compare
 
 class Handler:
     def onDestroy(self, *args):
@@ -28,11 +28,11 @@ class UI:
         self.label_matched = self.builder.get_object("lblMatchedImage")
         self.rbtn_comparison = self.builder.get_object("comparison_method")
         self.rbtn_minutiae = self.builder.get_object("minutiae_method")
-    def get_match_method(self) -> ImageComparison.compare.Method:
+    def get_match_method(self) -> ComparisonMethod:
         if self.rbtn_comparison.get_active():
-            return ImageComparison.compare.Method.COMPARISON
+            return ComparisonMethod.SSIM
         else:
-            return ImageComparison.compare.Method.MINUTIAE
+            return ComparisonMethod.SOURCE_AFIS
     def show(self):
         self.window.show_all()
     def hide(self):
