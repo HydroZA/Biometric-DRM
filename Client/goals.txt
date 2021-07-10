@@ -25,7 +25,7 @@ PROCESS idea 2: -> Probs better idk because we don't have to do a ton of IO on t
 3. Fingerprint is uploaded to server along with selected match method
 4. Match fingerprint on server against database using the selected method
     - How do we store the image files in the DB? 
-        - base64?
+        - bytearray
     - Server is written in Java 
     - Server returns match/no match
     - If there is a match it also returns the decryption key

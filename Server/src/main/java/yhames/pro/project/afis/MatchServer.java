@@ -11,7 +11,6 @@ package yhames.pro.project.afis;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -34,7 +33,11 @@ public class MatchServer
 
             while (!stopped) {
                 Socket client = server.accept();
+                System.out.println("Got client: " + client.toString());
+
                 handleClient(client);
+
+                System.out.println("Connection with: " + client + "complete. Terminating Connection...");
                 client.close();
             }
             server.close();
@@ -47,35 +50,40 @@ public class MatchServer
 
 
     private void handleClient(Socket client) {
-        System.out.println("Got client: " + client.toString());
-
         try {
             InputStream in = client.getInputStream();
             OutputStream out = client.getOutputStream();
 
-            MatchRequest matchRequest = readMatchRequest(in);
+            MatchRequest matchRequest = MatchRequest.read(in);
 
             if (matchRequest == null) {
                 return;
             }
 
-            Match result = matchClient(matchRequest);
+            Match result = handleMatching(matchRequest);
             
             if (result.isMatch()) {
                 System.out.println("MatchRequest succeeded with score: " + result.getScore());
-                out.write(new byte[] {0x00});
             }
             else {
-                out.write(new byte[] {0x01});
+                System.out.println("MatchRequest failed with score: " + result.getScore());
+            }
+
+            // Respond to the client
+            MatchResponse response = new MatchResponse(result);
+            if (response.send(out)) {
+                System.out.println("Responded to the client successfully");
+            }
+            else {
+                System.err.println("Failed to respond to the client");
             }
         }
         catch (Exception e) {
             System.err.println("Error while handling client, continuing...");
-            return;
         }
     }
 
-    private Match matchClient(MatchRequest matchRequest) {
+    private Match handleMatching(MatchRequest matchRequest) {
         DatabaseConnection db = new DatabaseConnection();
 
         switch (matchRequest.getMethod()) {
@@ -90,34 +98,6 @@ public class MatchServer
             case MSE -> System.out.println("Mean Squared Error Method chosen by Client");
             case SSIM -> System.out.println("Structural Similarity Index Method chosen by client");
         }
-        return new Match(true);
-    }
-
-    /* Clients request matches in the following format:
-    |--------|------------------------|--------------|
-    1 byte            |  4 bytes      | n bytes
-    method            |  body length  | body
-    0x00 = sourceafis |               |
-    0x01 = ssim       |
-    0x02 = mse        |
-    */
-    private MatchRequest readMatchRequest(InputStream in) {
-        try {
-            // Read the method
-            ComparisonMethod method = ComparisonMethod.values()[in.readNBytes(1)[0]];
-
-            // Read the message length
-            byte[] lenBytes = in.readNBytes(4);
-            int len = ByteBuffer.wrap(lenBytes).getInt();
-
-            // Read the image body
-            byte[] img = in.readNBytes(len);
-
-            return new MatchRequest(method, new Fingerprint(img));
-        }
-        catch (Exception e) {
-            System.err.println("Error while reading match request, continuing...");
-            return null;
-        }
+        return new Match(false);
     }
 }

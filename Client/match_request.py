@@ -29,7 +29,9 @@ class MatchRequest():
         mr = self.serialize()
         s.send(bytes(mr))
 
-        if bytearray(s.recv(1))[0] == 0x00:
+        result = bytearray(s.recv(1))[0]
+        s.close()
+        if result == 0x00:
             return True
         else:
             return False
