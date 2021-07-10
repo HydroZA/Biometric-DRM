@@ -30,13 +30,14 @@ public class MatchResponse {
     private byte[] serialize() {
         if (match.isMatch()) {
             ByteBuffer lengthBuffer = ByteBuffer.allocate(4);
-            lengthBuffer.putInt(this.match.getFingerprint().getImg().length);
+            int imgLen = this.match.getFingerprint().getImg().length;
+            lengthBuffer.putInt(imgLen);
             byte[] lengthBytes = lengthBuffer.array();
 
             // isMatch + length + img = size of whole message
-            byte[] serialized = new byte[1 + 4 + lengthBuffer.getInt()];
+            byte[] serialized = new byte[1 + 4 + imgLen];
 
-            // Add 0x00 indicated a good match
+            // Add 0x00 indicating a good match
             serialized[0] = 0x00;
 
             // Add the length of the image
@@ -47,7 +48,7 @@ public class MatchResponse {
                     0,
                     serialized,
                     5,
-                    lengthBuffer.getInt()
+                    imgLen
             );
 
             return serialized;

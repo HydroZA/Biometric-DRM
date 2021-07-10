@@ -4,6 +4,7 @@
 ### - Plan DRM System
 
 from match_request import MatchRequest
+from match_response import MatchResponse
 import ScannerDriver.driver as driver
 import UI.ui as ui
 import platform 
@@ -61,13 +62,29 @@ def on_btn_match_clicked(btn, gui: ui.UI):
     img_arr = image_to_byte_array(img)
 
     match_request = MatchRequest(gui.get_match_method(), img_arr)
-    result = match_request.send()
 
-    if result:
-        print("Match Request was successful")
+    conn = get_server_connection()
+
+    gui.set_prompt_label_text("Sending Image...")
+    match_request.send(conn)
+
+    gui.set_prompt_label_text("Reading Response...")
+    response = MatchResponse().read(conn)
+
+    if response.is_match:
+        gui.set_matched_image(response.img)
+        gui.set_prompt_label_text("Match Sucessful")
     else:
-        print("Match Request failed")
+        gui.set_prompt_label_text("Match Failed")
+    
+def get_server_connection() -> socket:
+        ip = '127.0.0.1'
+        port = 6969
 
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
+        s.connect((ip, port))
+
+        return s
 
 def image_to_byte_array(image:Image):
   imgByteArr = io.BytesIO()

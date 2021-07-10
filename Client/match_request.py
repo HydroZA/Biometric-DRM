@@ -19,19 +19,6 @@ class MatchRequest():
         request.extend(self.fingerprint)
 
         return request
-    def send(self):
-        ip = '127.0.0.1'
-        port = 6969
-
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
-        s.connect((ip, port))
-
+    def send(self, s: socket):
         mr = self.serialize()
         s.send(bytes(mr))
-
-        result = bytearray(s.recv(1))[0]
-        s.close()
-        if result == 0x00:
-            return True
-        else:
-            return False

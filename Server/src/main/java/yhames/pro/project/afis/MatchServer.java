@@ -37,7 +37,7 @@ public class MatchServer
 
                 handleClient(client);
 
-                System.out.println("Connection with: " + client + "complete. Terminating Connection...");
+                System.out.println("Connection with: " + client + " complete. Terminating Connection...");
                 client.close();
             }
             server.close();
