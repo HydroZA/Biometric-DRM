@@ -11,7 +11,7 @@ public class DatabaseConnection {
     private Fingerprint[] fingerprints;
     private Connection db;
 
-    private static final String url = "jdbc:sqlite:/Users/james/ownCloud/University/Masters/Project/Code/Stable/Server/resources/fingerprints.db";
+    private static final String url = "jdbc:sqlite:resources/fingerprints.db";
 
     public DatabaseConnection() {
         // connect to DB
@@ -34,11 +34,8 @@ public class DatabaseConnection {
     public Fingerprint[] getFingerprints() {
         if (fingerprints == null) {
             downloadFingerprints();
-            return this.fingerprints;
         }
-        else {
-            return this.fingerprints;
-        }
+        return this.fingerprints;
     }
 
     protected void downloadFingerprints() {

@@ -95,7 +95,7 @@
           <configuration>
             <archive>
               <manifest>
-                <mainClass>yhames.pro.project.afis.App</mainClass>
+                <mainClass>yhames.pro.project.afis.MatchServer</mainClass>
               </manifest>
             </archive>
             <descriptorRefs>

@@ -1,1 +1,10 @@
-yhames/pro/project/afis/App.class
+yhames/pro/project/afis/MatchRequest.class
+yhames/pro/project/afis/MatchResponse.class
+yhames/pro/project/afis/matchers/SourceAFIS.class
+yhames/pro/project/afis/ComparisonMethod.class
+yhames/pro/project/afis/matchers/Matcher.class
+yhames/pro/project/afis/matchers/Match.class
+yhames/pro/project/afis/MatchServer$1.class
+yhames/pro/project/afis/MatchServer.class
+yhames/pro/project/afis/Fingerprint.class
+yhames/pro/project/afis/DatabaseConnection.class

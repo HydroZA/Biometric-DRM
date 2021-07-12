@@ -19,5 +19,21 @@ data = (0, fp)
 
 db.execute(insert, data)
 
+fp = None
+with open ('fingerprints/NatLeftIndex.bmp', 'rb') as file:
+    fp = file.read()
+
+data = (1, fp)
+
+db.execute(insert, data)
+
+fp = None
+with open ('fingerprints/RightIndex.bmp', 'rb') as file:
+    fp = file.read()
+
+data = (2, fp)
+
+db.execute(insert, data)
+
 db.commit()
 db.close()
