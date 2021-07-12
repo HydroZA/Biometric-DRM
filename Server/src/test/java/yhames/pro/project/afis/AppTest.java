@@ -70,7 +70,7 @@ public class AppTest
             // get a fingerprint from a different finger
             Fingerprint test = new Fingerprint(
                 Files.readAllBytes(Path.of("/Users/james/ownCloud/University/Masters/Project/Code/Stable/Server/resources/fingerprints/LeftHand/LeftMiddle.bmp"))
-              );
+            );
             Match match = new SourceAFIS().match(test, fp);
 
             System.out.println("Match Score: " + match.getScore());

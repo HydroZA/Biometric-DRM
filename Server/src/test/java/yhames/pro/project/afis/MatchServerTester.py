@@ -20,6 +20,9 @@ def test():
     data.extend(bytearray(img_len))
     data.extend(bytearray(img))
 
+    # MatchRequest
+    s.send(b'\x01')
+
     s.send(bytes(data))
 
     if bytearray(s.recv(1))[0] != 0x00:

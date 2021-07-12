@@ -14,8 +14,7 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import yhames.pro.project.afis.matchers.Match;
-import yhames.pro.project.afis.matchers.SourceAFIS;
+import yhames.pro.project.afis.requests.*;
 
 public class MatchServer 
 {
@@ -35,7 +34,12 @@ public class MatchServer
                 Socket client = server.accept();
                 System.out.println("Got client: " + client.toString());
 
-                handleClient(client);
+                boolean result = handleClient(client);
+                if (result) {
+                    System.out.println("Client Request was Handled Successfully");
+                } else {
+                    System.out.println(("Something went wrong during client's request"));
+                }
 
                 System.out.println("Connection with: " + client + " complete. Terminating Connection...");
                 client.close();
@@ -48,58 +52,24 @@ public class MatchServer
         } 
     }
 
-
-    private void handleClient(Socket client) {
+    private boolean handleClient(Socket client) {
         try {
             InputStream in = client.getInputStream();
             OutputStream out = client.getOutputStream();
 
+            // Request will be the relevant polymorphic type of Result
+            Request result = Request.read(in);
 
-
-            MatchRequest matchRequest = MatchRequest.read(in);
-
-            if (matchRequest == null) {
-                return;
-            }
-
-            Match result = handleMatching(matchRequest);
-            
-            if (result.isMatch()) {
-                System.out.println("MatchRequest succeeded with score: " + result.getScore());
+            // The request is handled by the relevant type of request
+            if (result != null) {
+                return result.handle(out);
             }
             else {
-                System.out.println("MatchRequest failed with score: " + result.getScore());
-            }
-
-            // Respond to the client
-            MatchResponse response = new MatchResponse(result);
-            if (response.send(out)) {
-                System.out.println("Responded to the client successfully");
-            }
-            else {
-                System.err.println("Failed to respond to the client");
+                throw new Exception();
             }
         }
         catch (Exception e) {
-            System.err.println("Error while handling client, continuing...");
+            return false;
         }
-    }
-
-    private Match handleMatching(MatchRequest matchRequest) {
-        DatabaseConnection db = new DatabaseConnection();
-
-        switch (matchRequest.getMethod()) {
-            case SOURCE_AFIS -> {
-                System.out.println("SourceAFIS Method chosen by Client");
-                return new SourceAFIS()
-                        .search(
-                                matchRequest.getProbe(),
-                                db.getFingerprints()
-                        );
-            }
-            case MSE -> System.out.println("Mean Squared Error Method chosen by Client");
-            case SSIM -> System.out.println("Structural Similarity Index Method chosen by client");
-        }
-        return new Match(false);
     }
 }
