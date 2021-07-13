@@ -6,6 +6,7 @@ import java.io.OutputStream;
 
 public abstract class Request {
     public abstract boolean handle(OutputStream out) throws IOException;
+
     /*
         COMMUNICATION PROTOCOL:
         |-----------------------------------|------------------------
@@ -15,9 +16,10 @@ public abstract class Request {
         0x01 = match                        | -> return MatchResponse
         0x02 = enroll                       | -> return EnrollResponse
         0x03 = delete                       | -> return DeleteResponse
-        0x04 = reserved (getLicenses()?)    |
+        0x04 = authentication               | -> return AuthenticationResponse
         0x05 = reserved                     |
      */
+
     public static Request read(InputStream in) throws IOException {
         // read request type
         byte type = in.readNBytes(1)[0];

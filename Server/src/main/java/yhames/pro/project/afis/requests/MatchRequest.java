@@ -16,6 +16,9 @@ public class MatchRequest extends Request {
     private ComparisonMethod method;
     private Fingerprint probe;
 
+    public MatchRequest() {
+    }
+
     private MatchRequest (ComparisonMethod m, Fingerprint fp) {
         this.method = m;
         this.probe = fp;
@@ -59,8 +62,7 @@ public class MatchRequest extends Request {
         return new MatchRequest(method, new Fingerprint(img));
     }
 
-    @Override
-    public boolean handle(OutputStream out) throws IOException {
+    public Match performMatch() {
         DatabaseConnection db = new DatabaseConnection();
 
         Match result;
@@ -84,9 +86,16 @@ public class MatchRequest extends Request {
                 result = new Match(false);
             }
             default -> {
-                return false;
+                return null;
             }
         }
+        return result;
+    }
+
+    @Override
+    public boolean handle(OutputStream out) throws IOException {
+        Match result = performMatch();
+
         if (result.isMatch()) {
             System.out.println("MatchRequest succeeded with score: " + result.getScore());
         } else {
