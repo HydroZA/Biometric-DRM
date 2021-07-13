@@ -1,6 +1,8 @@
 package yhames.pro.project.afis;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.junit.Assert.fail;
@@ -17,17 +19,35 @@ import yhames.pro.project.afis.matchers.*;
  */
 public class AppTest 
 {
-    private Path fileName; 
-    private Fingerprint fp; 
+    private Fingerprint fp;
+    private static final String testDir = "src/test/java/yhames/pro/project/afis/";
+    private static Thread server;
 
     public AppTest() {
         try {
-           fileName = Path.of("/Users/james/ownCloud/University/Masters/Project/Code/Stable/Server/resources/fingerprints/LeftIndex.bmp");  
-           fp = new Fingerprint(Files.readAllBytes(fileName));
+            Path fileName = Path.of("resources/fingerprints/LeftIndex.bmp");
+            fp = new Fingerprint(Files.readAllBytes(fileName));
         }
         catch (IOException e) {
             System.err.println("Unable to find the reference image");
             fail();
+        }
+    }
+
+    @BeforeClass
+    public static void setUp() {
+        // Start server thread on 6969
+        server = new Thread(new MatchServer());
+        server.start();
+    }
+
+    @AfterClass
+    public static void tearDown() {
+        try {
+            MatchServer.stop();
+        }
+        catch (IOException e) {
+            System.err.println("Error while stopping server");
         }
     }
 
@@ -69,7 +89,7 @@ public class AppTest
         try {
             // get a fingerprint from a different finger
             Fingerprint test = new Fingerprint(
-                Files.readAllBytes(Path.of("/Users/james/ownCloud/University/Masters/Project/Code/Stable/Server/resources/fingerprints/LeftHand/LeftMiddle.bmp"))
+                Files.readAllBytes(Path.of("resources/fingerprints/LeftHand/LeftMiddle.bmp"))
             );
             Match match = new SourceAFIS().match(test, fp);
 
@@ -89,22 +109,23 @@ public class AppTest
     public void testServer() {
         final int iterations = 10;
 
-        // Start the server in its own thread
-        Thread t = new Thread(() -> {
-            MatchServer server = new MatchServer();
-            server.start(6969);
-        });
-        t.start();
-
         int exitCode = runPythonScript(
-            "/Users/james/ownCloud/University/Masters/Project/Code/Stable/Server/src/test/java/yhames/pro/project/afis/MatchServerTester.py", 
+            testDir + "MatchServerTester.py",
             iterations
         );
 
-        // Kill the server thread
-        t.interrupt();        
+        Assert.assertEquals(0, exitCode);
+    }
+
+    @Test
+    public void testHandshake() {
+        int exitCode = runPythonScript(
+                testDir + "TestHandshake.py",
+                5
+        );
 
         Assert.assertEquals(0, exitCode);
+
     }
 
     // Returns exit code of python program

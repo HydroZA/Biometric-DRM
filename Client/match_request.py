@@ -14,7 +14,10 @@ class MatchRequest():
         self.method = method
         self.fingerprint = fingerprint
     def serialize(self) -> bytearray:
-        request = bytearray([self.method.value])
+        #0x01 is used by the server to identify match requests
+        request = bytearray([0x01])
+
+        request.extend(self.method.value)
         request.extend(len(self.fingerprint).to_bytes(4, 'big'))
         request.extend(self.fingerprint)
 

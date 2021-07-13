@@ -34,10 +34,11 @@ PROCESS idea 2: -> Probs better idk because we don't have to do a ton of IO on t
 
 12/07 TODO:
     Must-DO:
-        1. Add enroll functionality
+        1. Add enroll functionality \/
         2. Check that we can generate an identical key each time on the server
         3. Extend server communication protocol to allow for key transmission
     Should-Do:
         4. SSIM and MSE matching methods implementation
     Extra time:
         - Extend database to hold a list of licenses that each fingerprint holds
+        - Create actual DRM client UI

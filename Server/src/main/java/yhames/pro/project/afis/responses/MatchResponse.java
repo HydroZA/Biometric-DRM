@@ -61,15 +61,9 @@ public class MatchResponse extends Response {
     }
 
     // Returns a boolean indicating success
-    public boolean send(OutputStream out) {
+    public boolean send(OutputStream out) throws IOException{
         byte[] matchResponseSerialized = this.serialize();
-
-        try {
-            out.write(matchResponseSerialized);
-            return true;
-        }
-        catch (IOException e) {
-            return false;
-        }
+        out.write(matchResponseSerialized);
+        return true;
     }
 }

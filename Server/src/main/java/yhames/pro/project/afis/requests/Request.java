@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public abstract class Request {
-    public abstract boolean handle(OutputStream out);
+    public abstract boolean handle(OutputStream out) throws IOException;
     /*
         COMMUNICATION PROTOCOL:
         |-----------------------------------|------------------------

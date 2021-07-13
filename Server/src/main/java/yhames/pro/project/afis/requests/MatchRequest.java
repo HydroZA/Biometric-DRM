@@ -16,7 +16,7 @@ public class MatchRequest extends Request {
     private ComparisonMethod method;
     private Fingerprint probe;
 
-    public MatchRequest (ComparisonMethod m, Fingerprint fp) {
+    private MatchRequest (ComparisonMethod m, Fingerprint fp) {
         this.method = m;
         this.probe = fp;
     }
@@ -41,7 +41,7 @@ public class MatchRequest extends Request {
 |-----------|--------|------------------------|--------------|
 1 byte      |1 byte            |  4 bytes      | n bytes
 0x01        |method            |  body length  | body
-            0x00 = sourceafis |               |
+            0x00 = sourceafis |                |
             0x01 = ssim       |
             0x02 = mse        |
     */
@@ -60,7 +60,7 @@ public class MatchRequest extends Request {
     }
 
     @Override
-    public boolean handle(OutputStream out) {
+    public boolean handle(OutputStream out) throws IOException {
         DatabaseConnection db = new DatabaseConnection();
 
         Match result;

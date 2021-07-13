@@ -1,11 +1,3 @@
-/*
-    Responsible for listening for incoming MatchRequests for clients
-
-    should return these match requests to who ever owns its object
-
-    sockets should close once the match request is complete
-*/
-
 package yhames.pro.project.afis;
 
 import java.io.IOException;
@@ -13,24 +5,30 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 
 import yhames.pro.project.afis.requests.*;
 
-public class MatchServer 
+public class MatchServer implements Runnable
 {
-    private boolean stopped = false;
-
     public static void main( String[] args )
     {
         new MatchServer().start(6969);
     }
 
+    private static ServerSocket server;
+
+    public static void stop() throws IOException{
+        server.close();
+    }
+
+    @SuppressWarnings("InfiniteLoopStatement")
     public void start(int port) {
         try {
-            ServerSocket server = new ServerSocket(port);
+            server = new ServerSocket(port);
             System.out.println("Server Listening on " + port);
 
-            while (!stopped) {
+            while(true) {
                 Socket client = server.accept();
                 System.out.println("Got client: " + client.toString());
 
@@ -44,12 +42,15 @@ public class MatchServer
                 System.out.println("Connection with: " + client + " complete. Terminating Connection...");
                 client.close();
             }
-            server.close();
+         //   server.close();
+        }
+        catch (SocketException ex) {
+            System.out.println("Server stopped");
         }
         catch (IOException e) {
             e.printStackTrace();
             System.exit(1);
-        } 
+        }
     }
 
     private boolean handleClient(Socket client) {
@@ -71,5 +72,10 @@ public class MatchServer
         catch (Exception e) {
             return false;
         }
+    }
+
+    @Override
+    public void run() {
+        new MatchServer().start(6969);
     }
 }
