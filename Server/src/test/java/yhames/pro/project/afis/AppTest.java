@@ -107,7 +107,7 @@ public class AppTest
         Tests the MatchServer by calling a python script which simulates a client
     */
     public void testServer() {
-        final int iterations = 10;
+        final int iterations = 2;
 
         int exitCode = runPythonScript(
             testDir + "MatchServerTester.py",

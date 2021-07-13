@@ -1,5 +1,7 @@
 package yhames.pro.project.afis.requests;
 
+import yhames.pro.project.afis.responses.HandshakeResponse;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -14,9 +16,9 @@ public class HandshakeRequest extends Request {
     public static HandshakeRequest read(InputStream in) {
         return new HandshakeRequest();
     }
+
     @Override
     public boolean handle(OutputStream out) throws IOException {
-       out.write(new byte[]  { 0x00 });
-       return true;
+       return new HandshakeResponse().send(out);
     }
 }

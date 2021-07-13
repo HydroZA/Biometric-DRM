@@ -2,6 +2,7 @@ package yhames.pro.project.afis.requests;
 
 import yhames.pro.project.afis.DatabaseConnection;
 import yhames.pro.project.afis.Fingerprint;
+import yhames.pro.project.afis.responses.EnrollResponse;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,11 +39,12 @@ public class EnrollRequest extends Request {
     }
 
     @Override
-    public boolean handle(OutputStream out) {
+    public boolean handle(OutputStream out) throws IOException {
         DatabaseConnection db = new DatabaseConnection();
         boolean result = db.enroll(toEnroll);
 
-
+        EnrollResponse er = new EnrollResponse(result);
+        er.send(out);
         return result;
     }
 }

@@ -1,6 +1,7 @@
 package yhames.pro.project.afis.responses;
 
 import yhames.pro.project.afis.matchers.Match;
+import yhames.pro.project.afis.requests.MatchRequest;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -9,8 +10,8 @@ import java.nio.ByteBuffer;
 public class MatchResponse extends Response {
     private Match match;
 
-    public MatchResponse(Match match) {
-        this.match = match;
+    public MatchResponse(Match mr) {
+        this.match = mr;
     }
 
     /*

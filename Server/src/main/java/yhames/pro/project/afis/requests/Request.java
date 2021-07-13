@@ -24,12 +24,15 @@ public abstract class Request {
 
         switch(type) {
             case 0x00 -> {
+                System.out.println("Client is requesting a handshake");
                 return HandshakeRequest.read(in);
             }
             case 0x01 -> {
+                System.out.println("Client is requesting a fingerprint match");
                 return MatchRequest.read(in);
             }
             case 0x02 -> {
+                System.out.println("Client is requesting to enroll a fingerprint");
                 return EnrollRequest.read(in);
             }
             default -> {
