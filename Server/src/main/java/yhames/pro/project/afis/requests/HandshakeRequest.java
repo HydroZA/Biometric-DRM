@@ -10,11 +10,11 @@ import java.io.OutputStream;
 // A single byte is sent by the client (0x00) and if the server is running then a 0x00 is returned
 
 public class HandshakeRequest extends Request {
-    private HandshakeRequest() {
+    public HandshakeRequest() {
 
     }
-    public static HandshakeRequest read(InputStream in) {
-        return new HandshakeRequest();
+    public HandshakeRequest read(InputStream in) {
+        return this;
     }
 
     @Override

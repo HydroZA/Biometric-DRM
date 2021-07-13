@@ -59,7 +59,7 @@ public class MatchServer implements Runnable
             OutputStream out = client.getOutputStream();
 
             // Request will be the relevant polymorphic type of Result
-            Request result = Request.read(in);
+            Request result = Request.getRequest(in);
 
             // The request is handled by the relevant type of request
             if (result != null) {

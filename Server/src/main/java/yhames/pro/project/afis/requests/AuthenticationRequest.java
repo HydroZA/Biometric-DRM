@@ -6,26 +6,33 @@ import yhames.pro.project.afis.matchers.Match;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 
-public class AuthenticationRequest extends Request {
+public class AuthenticationRequest extends MatchRequest {
     private String softwareToCheckLicenseFor;
-    private MatchRequest matchRequest;
 
-    private AuthenticationRequest(String softwareName, MatchRequest mr) {
+    public AuthenticationRequest(String softwareName) {
+        super();
         this.softwareToCheckLicenseFor = softwareName;
-        this.matchRequest = mr;
     }
 
     /*
         AUTHENTICATION REQUEST PROTOCOL:
-        |--------|---------------------|
-        0x05     | 4 bytes             |
-                 | softwareName Length |
+        |--------|---------------------|----------------|------->
+        0x05     | 4 bytes             | n bytes        | MatchRequest
+                 | softwareName Length | softwareName   |
      */
-    public static AuthenticationRequest read(InputStream in) throws IOException {
+    public AuthenticationRequest read(InputStream in) throws IOException {
+        // Read the name length
+        byte[] lenBytes = in.readNBytes(4);
+        int len = ByteBuffer.wrap(lenBytes).getInt();
+
+        this.softwareToCheckLicenseFor = new String(in.readNBytes(len));
+
         // The latter part of an authentication request is the same as a MatchRequest
-        MatchRequest mr = MatchRequest.read(in);
-        return null;
+        super.read(in);
+
+        return this;
     }
 
     @Override

@@ -48,7 +48,7 @@ public class MatchRequest extends Request {
             0x01 = ssim       |
             0x02 = mse        |
     */
-    public static MatchRequest read(InputStream in) throws IOException {
+    public MatchRequest read(InputStream in) throws IOException {
         // Read the method
         ComparisonMethod method = ComparisonMethod.values()[in.readNBytes(1)[0]];
 

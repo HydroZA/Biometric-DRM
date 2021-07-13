@@ -20,22 +20,24 @@ public abstract class Request {
         0x05 = reserved                     |
      */
 
-    public static Request read(InputStream in) throws IOException {
+    public abstract Request read(InputStream in) throws IOException;
+
+    public static Request getRequest(InputStream in) throws IOException {
         // read request type
         byte type = in.readNBytes(1)[0];
 
         switch(type) {
             case 0x00 -> {
                 System.out.println("Client is requesting a handshake");
-                return HandshakeRequest.read(in);
+                return new HandshakeRequest().read(in);
             }
             case 0x01 -> {
                 System.out.println("Client is requesting a fingerprint match");
-                return MatchRequest.read(in);
+                return new MatchRequest().read(in);
             }
             case 0x02 -> {
                 System.out.println("Client is requesting to enroll a fingerprint");
-                return EnrollRequest.read(in);
+                return new EnrollRequest().read(in);
             }
             default -> {
                 // TODO: Implement the rest of the request types

@@ -22,20 +22,18 @@ import java.nio.ByteBuffer;
 
 
 public class EnrollRequest extends Request {
-    private final Fingerprint toEnroll;
-    private EnrollRequest(Fingerprint fp){
-        this.toEnroll = fp;
+    private Fingerprint toEnroll;
+    public EnrollRequest(){
     }
 
-    public static EnrollRequest read(InputStream in) throws IOException {
+    public EnrollRequest read(InputStream in) throws IOException {
         // Read the message length
         byte[] lenBytes = in.readNBytes(4);
         int len = ByteBuffer.wrap(lenBytes).getInt();
 
         // Read the image body
-        byte[] img = in.readNBytes(len);
-
-        return new EnrollRequest(new Fingerprint(img));
+        this.toEnroll = new Fingerprint(in.readNBytes(len));
+        return this;
     }
 
     @Override
