@@ -25,7 +25,7 @@ public class AuthenticationRequest extends Request {
     public static AuthenticationRequest read(InputStream in) throws IOException {
         // The latter part of an authentication request is the same as a MatchRequest
         MatchRequest mr = MatchRequest.read(in);
-
+        return null;
     }
 
     @Override
