@@ -4,6 +4,7 @@ public class Fingerprint {
     private int id;
     private byte[] img;
     
+    
     public Fingerprint(int id, byte[]  img) {
         this.id = id;
         this.img = img;
