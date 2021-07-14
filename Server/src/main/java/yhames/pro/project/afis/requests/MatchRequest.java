@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.sql.SQLException;
 
 public class MatchRequest extends Request {
     private ComparisonMethod method;
@@ -93,7 +94,7 @@ public class MatchRequest extends Request {
     }
 
     @Override
-    public boolean handle(OutputStream out) throws IOException {
+    public boolean handle(OutputStream out) throws IOException, SQLException, Exception {
         Match result = performMatch();
 
         if (result.isMatch()) {

@@ -1,6 +1,10 @@
 package yhames.pro.project.afis;
 
 import yhames.pro.project.afis.Fingerprint;
+
+import javax.management.openmbean.OpenDataException;
+import javax.naming.OperationNotSupportedException;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -18,6 +22,8 @@ public class DatabaseConnection {
         connect();
     }
 
+    // TODO: Remove all these try/catch blocks and change the method headers to throw them instead
+    // The server shouldn't crash when we encounter an issue dealing with one clients request
     private void connect() {
         Connection conn = null;
         try {
@@ -94,5 +100,34 @@ public class DatabaseConnection {
             System.exit(1);
             return false;
         }
+    }
+
+    private int getIDFromSoftwareTitle(String title) throws SQLException {
+        String sqlGetIDFromSoftwareName = String.format(
+                "SELECT id FROM Software WHERE title=\"%s\"",
+                title
+        );
+
+        PreparedStatement stmt = db.prepareStatement(sqlGetIDFromSoftwareName);
+        ResultSet rs = stmt.executeQuery();
+
+        return rs.getInt(1);
+    }
+    public boolean checkAuthorization(Fingerprint fingerprint, int softwareID) throws SQLException {
+        String sqlCheckIfLicense = String.format(
+                "SELECT COUNT(1) FROM Licenses WHERE fingerprint=%o AND software=%o",
+                fingerprint.getId(),
+                softwareID
+        );
+
+        PreparedStatement stmt = db.prepareStatement(sqlCheckIfLicense);
+        ResultSet rs = stmt.executeQuery();
+
+        // The query will return 1 if the entry exists otherwise 0
+        return rs.getInt(1) == 1;
+    }
+    public boolean checkAuthorization(Fingerprint fingerprint, String softwareTitle) throws SQLException {
+        int softwareID = getIDFromSoftwareTitle(softwareTitle);
+        return checkAuthorization(fingerprint, softwareID);
     }
 }

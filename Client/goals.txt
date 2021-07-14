@@ -45,4 +45,21 @@ TODO:
 
 DATABASE CHANGE: licenses branch
 Database is being extended to contain another table with the software that this drm controls
-The Fingerprints table will contain a cross reference for each fingerprint with the corresponding licenses it holds
+The Licenses table will contain a foreign for each fingerprint with the corresponding licenses it holds
+
+ENCRYPTION PROTOCOL:
+1. Publisher opens an Admin client app
+2. Admin Client app allows the user to select a folder to Encrypt 
+3. Admin client app then requires a fingerprint to encrypt the folder with
+4. The folder is encrypted using the supplied fingerprint as password
+5. Fingerprint is then enrolled on the servers database
+6. Software is then distributed to the client who bought a license for it 
+
+DECRYPTION PROTOCOL:
+1. The client now has the encrypted folder and wishes to launch the software
+2. A decryption client app is opened and the encrypted folder is selected
+3. The user scans their fingerprint
+4. An AuthenticationRequest is sent to the server
+5. If the fingerprint is a match to the database, the server checks if the user has a license for the software that is being launched
+6. If they have a license, the server derives the decryption key from the fingerprint stored in the database
+7. The server responds with an AuthenticationResponse which contains the decryption key 

@@ -3,9 +3,10 @@ package yhames.pro.project.afis.requests;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.sql.SQLException;
 
 public abstract class Request {
-    public abstract boolean handle(OutputStream out) throws IOException;
+    public abstract boolean handle(OutputStream out) throws Exception;
 
     /*
         COMMUNICATION PROTOCOL:
@@ -38,6 +39,10 @@ public abstract class Request {
             case 0x02 -> {
                 System.out.println("Client is requesting to enroll a fingerprint");
                 return new EnrollRequest().read(in);
+            }
+            case 0x05 -> {
+                System.out.println("Client is requesting authentication");
+                return new AuthenticationRequest().read(in);
             }
             default -> {
                 // TODO: Implement the rest of the request types
