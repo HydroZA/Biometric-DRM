@@ -51,16 +51,16 @@ public class MatchRequest extends Request {
     */
     public MatchRequest read(InputStream in) throws IOException {
         // Read the method
-        ComparisonMethod method = ComparisonMethod.values()[in.readNBytes(1)[0]];
+        this.method = ComparisonMethod.values()[in.readNBytes(1)[0]];
 
         // Read the message length
         byte[] lenBytes = in.readNBytes(4);
         int len = ByteBuffer.wrap(lenBytes).getInt();
 
         // Read the image body
-        byte[] img = in.readNBytes(len);
+        this.probe = new Fingerprint(in.readNBytes(len));
 
-        return new MatchRequest(method, new Fingerprint(img));
+        return this;
     }
 
     public Match performMatch() {
@@ -94,7 +94,7 @@ public class MatchRequest extends Request {
     }
 
     @Override
-    public boolean handle(OutputStream out) throws IOException, SQLException, Exception {
+    public boolean handle(OutputStream out) throws Exception {
         Match result = performMatch();
 
         if (result.isMatch()) {

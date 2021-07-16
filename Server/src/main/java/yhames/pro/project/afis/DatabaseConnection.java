@@ -103,6 +103,10 @@ public class DatabaseConnection {
     }
 
     private int getIDFromSoftwareTitle(String title) throws SQLException {
+        if (db.isClosed()) {
+            connect();
+        }
+
         String sqlGetIDFromSoftwareName = String.format(
                 "SELECT id FROM Software WHERE title=\"%s\"",
                 title
@@ -111,9 +115,14 @@ public class DatabaseConnection {
         PreparedStatement stmt = db.prepareStatement(sqlGetIDFromSoftwareName);
         ResultSet rs = stmt.executeQuery();
 
-        return rs.getInt(1);
+        int result = rs.getInt(1);
+        db.close();
+        return result;
     }
     public boolean checkAuthorization(Fingerprint fingerprint, int softwareID) throws SQLException {
+        if (db.isClosed()) {
+            connect();
+        }
         String sqlCheckIfLicense = String.format(
                 "SELECT COUNT(1) FROM Licenses WHERE fingerprint=%o AND software=%o",
                 fingerprint.getId(),
@@ -124,7 +133,9 @@ public class DatabaseConnection {
         ResultSet rs = stmt.executeQuery();
 
         // The query will return 1 if the entry exists otherwise 0
-        return rs.getInt(1) == 1;
+        boolean result = rs.getInt(1) == 1;
+        db.close();
+        return result;
     }
     public boolean checkAuthorization(Fingerprint fingerprint, String softwareTitle) throws SQLException {
         int softwareID = getIDFromSoftwareTitle(softwareTitle);

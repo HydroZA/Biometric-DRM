@@ -56,26 +56,27 @@ public class AuthenticationRequest extends MatchRequest {
     }
 
     private String getDecryptionKey() {
-        //TODO: getDecryptionKey()
-        throw new UnsupportedOperationException();
+        //TODO:
+        return "DecryptionKeyFam";
     }
 
     @Override
     public boolean handle(OutputStream out) throws Exception {
         Match match = super.performMatch();
         Response response;
+        // TODO: Can this mess of if statements be simplified?
         if (match.isMatch()) {
             boolean authorized = checkIfUserHasAuthorizationForSoftware(match);
             if (authorized) {
                 String key = getDecryptionKey();
-                response = new AuthenticationResponse(match, key);
+                response = new AuthenticationResponse(true, key);
             }
             else {
-                response = new AuthenticationResponse(match, "");
+                response = new AuthenticationResponse(false, "");
             }
         }
         else {
-            response = new AuthenticationResponse(match, "");
+            response = new AuthenticationResponse(false, "");
         }
 
         return response.send(out);

@@ -29,6 +29,7 @@ def test():
         print("NOT 0 FAM")
         exit(1)
 
+
 if len(sys.argv) < 2:
     repetitions = 1
 else:

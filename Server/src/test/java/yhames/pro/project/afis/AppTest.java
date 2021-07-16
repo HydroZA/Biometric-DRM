@@ -128,6 +128,23 @@ public class AppTest
 
     }
 
+    @Test
+    /*
+        Tests the Authentication by calling a python script which simulates a client
+    */
+    // TODO: BUG: This test blocks when MatchRequest is read
+    public void testAuthentication() {
+        final int iterations = 2;
+
+        int exitCode = runPythonScript(
+                testDir + "TestAuthentication.py",
+                iterations
+        );
+
+        Assert.assertEquals(0, exitCode);
+    }
+
+
     // Returns exit code of python program
     private int runPythonScript(String path, int iterations) {
         // Call python script
