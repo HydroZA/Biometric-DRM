@@ -1,0 +1,9 @@
+.DS_Store
+resources/
+*.class
+target
+.settings
+.idea
+.project
+__pycache__
+.vscode/
