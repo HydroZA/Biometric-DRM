@@ -70,6 +70,7 @@ public class MatchServer implements Runnable
             }
         }
         catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }

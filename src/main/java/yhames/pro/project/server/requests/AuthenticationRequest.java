@@ -61,10 +61,9 @@ public class AuthenticationRequest extends MatchRequest {
                 );
     }
 
-    private String getDecryptionKey() throws InvalidKeySpecException, NoSuchAlgorithmException {
-        SecretKey key = getAESKeyWithSalt(super.getProbe().getImg());
-        //TODO:
-        return "key";
+    public SecretKey getDecryptionKey() throws InvalidKeySpecException, NoSuchAlgorithmException {
+        // TODO: Verify that this key is the same each time given a fingerprint
+        return getAESKeyWithSalt(super.getProbe().getImg());
     }
 
     // AES key derived from a password
@@ -86,15 +85,15 @@ public class AuthenticationRequest extends MatchRequest {
         if (match.isMatch()) {
             boolean authorized = checkIfUserHasAuthorizationForSoftware(match);
             if (authorized) {
-                String key = getDecryptionKey();
+                SecretKey key = getDecryptionKey();
                 response = new AuthenticationResponse(true, key);
             }
             else {
-                response = new AuthenticationResponse(false, "");
+                response = new AuthenticationResponse(false);
             }
         }
         else {
-            response = new AuthenticationResponse(false, "");
+            response = new AuthenticationResponse(false);
         }
 
         return response.send(out);

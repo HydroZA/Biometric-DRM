@@ -21,16 +21,20 @@ def test():
     data.extend(bytearray(img_len))
     data.extend(bytearray(img))
 
-    print(data[:10])
-
     # 0x05 is a AuthenticationRequest
     s.send(b'\x05')
     s.send(softwareNameLen)
     s.send(softwareName)
     s.send(bytes(data))
 
-    if bytearray(s.recv(1))[0] != 0x00:
-        exit(1)
+    response = bytearray(s.recv(5))
+    if response[0] == 0x00:
+        key_len = int.from_bytes(bytes(response[1:5]), 'big')
+        key = bytearray(s.recv(key_len))
+        print(key)
+    else:
+        quit(1)
+
 
 test()
 #if len(sys.argv) < 2:

@@ -13,6 +13,9 @@ import java.nio.file.Path;
 import java.lang.Thread;
 
 import yhames.pro.project.server.matchers.*;
+import yhames.pro.project.server.requests.AuthenticationRequest;
+
+import javax.crypto.SecretKey;
 
 /**
  * Unit test for simple App.
@@ -142,8 +145,7 @@ public class AppTest
 
         Assert.assertEquals(0, exitCode);
     }
-
-
+    
     // Returns exit code of python program
     private int runPythonScript(String path, int iterations) {
         // Call python script
